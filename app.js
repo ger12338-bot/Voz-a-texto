@@ -50,7 +50,7 @@ if (!SpeechRecognition) {
     };
 }
 
-// 2. Control de Grabación e Inyección del Cronómetro
+// 2. Control de Grabación y Cronómetro
 btnGrabar.addEventListener('click', () => {
     if (!escuchando) {
         iniciarEscucha();
@@ -70,7 +70,7 @@ function iniciarEscucha() {
     ondasVoz.classList.remove('oculto');
     estadoTexto.textContent = "Grabando conversación...";
 
-    // Iniciar el Cronómetro
+    // Iniciar Cronómetro
     segundosTotales = 0;
     cronometroElement.textContent = "00:00";
     cronometroElement.classList.remove('oculto');
@@ -86,7 +86,7 @@ function detenerEscucha() {
     ondasVoz.classList.add('oculto');
     estadoTexto.textContent = "Dictado pausado";
 
-    // Detener el Cronómetro
+    // Detener Cronómetro
     clearInterval(timerInterval);
 }
 
@@ -104,7 +104,7 @@ function actualizarContadores() {
     countLetras.textContent = `${texto.length} caracteres`;
 }
 
-// 4. NUEVA MEJORA: Exportar a Microsoft Word (.doc)
+// 4. CORREGIDO: Exportar a Microsoft Word (.doc)
 document.getElementById('btn-word').addEventListener('click', () => {
     const texto = cuadroTexto.value.trim();
     if (texto === "") {
@@ -112,18 +112,14 @@ document.getElementById('btn-word').addEventListener('click', () => {
         return;
     }
 
-    // Convertimos el texto plano agregándole saltos de línea compatibles con Word
     const contenidoFormateado = texto.replace(/\n/g, '<br>');
-    
-    // Creamos un archivo binario (Blob) con formato de texto enriquecido/HTML que Word entiende perfectamente
     const datosWord = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Transcripción</title><style>body {font-family:Arial;}</style></head><body>${contenidoFormateado}</body></html>`;
     
     const blob = new Blob(['\ufeff' + datosWord], {
         type: 'application/msword'
     });
     
-    // Generamos un enlace oculto en la página para forzar la descarga del archivo
-    const url Descarga = URL.createObjectURL(blob);
+    const urlDescarga = URL.createObjectURL(blob);
     const enlaceOculto = document.createElement('a');
     enlaceOculto.href = urlDescarga;
     enlaceOculto.download = `Transcripcion_${new Date().toLocaleDateString()}.doc`;
@@ -133,7 +129,7 @@ document.getElementById('btn-word').addEventListener('click', () => {
     mostrarToast("¡Documento de Word descargado!");
 });
 
-// 5. NUEVA MEJORA: Sistema de Historial Local
+// 5. Sistema de Historial Local
 document.getElementById('btn-guardar').addEventListener('click', () => {
     const texto = cuadroTexto.value.trim();
     if(texto === "") return;
@@ -145,11 +141,11 @@ document.getElementById('btn-guardar').addEventListener('click', () => {
         contenido: texto
     };
 
-    notasGuardadas.unshift(nuevaNota); // Guarda la más reciente al principio
+    notasGuardadas.unshift(nuevaNota);
     localStorage.setItem('notas_dictado', JSON.stringify(notasGuardadas));
     
     cargarHistorial();
-    mostrarToast("¡Nota guardada en el historial!");
+    mostrarToast("¡Nota guardada!");
 });
 
 function cargarHistorial() {
@@ -167,11 +163,12 @@ function cargarHistorial() {
         div.innerHTML = `
             <h4>${nota.fecha}</h4>
             <p>${nota.contenido}</p>
-            <button class="btn-delete-nota" onclick="eliminarNota(${nota.id})">
+            <button class="btn-delete-nota" data-id="${nota.id}">
                 <span class="material-icons" style="font-size:18px;">delete</span>
             </button>
         `;
-        // Al hacer clic en la nota del historial, la recupera en la pantalla principal
+        
+        // Cargar nota al hacer clic
         div.addEventListener('click', (e) => {
             if(!e.target.closest('.btn-delete-nota')) {
                 cuadroTexto.value = nota.contenido;
@@ -181,17 +178,26 @@ function cargarHistorial() {
         });
         listaHistorial.appendChild(div);
     });
+
+    // Asignar eventos de borrado de forma segura
+    document.querySelectorAll('.btn-delete-nota').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita cargar la nota al intentar borrarla
+            const id = Number(btn.getAttribute('data-id'));
+            eliminarNota(id);
+        });
+    });
 }
 
-window.eliminarNota = function(id) {
+function eliminarNota(id) {
     let notasGuardadas = JSON.parse(localStorage.getItem('notas_dictado')) || [];
     notasGuardadas = notasGuardadas.filter(nota => nota.id !== id);
     localStorage.setItem('notas_dictado', JSON.stringify(notasGuardadas));
     cargarHistorial();
     mostrarToast("Nota eliminada");
-};
+}
 
-// 6. Funciones comunes modificadas (Copiar, Borrar, Modo Oscuro, Toast)
+// 6. Funciones comunes
 document.getElementById('btn-copiar').addEventListener('click', () => {
     if(cuadroTexto.value.trim() === "") return;
     navigator.clipboard.writeText(cuadroTexto.value);
@@ -216,7 +222,7 @@ function mostrarToast(mensaje) {
     setTimeout(() => toast.classList.remove('mostrar'), 2500);
 }
 
-// Inicializar el historial al abrir la app
+// Inicializar el historial al cargar la página
 cargarHistorial();
 
 // Modo Oscuro
