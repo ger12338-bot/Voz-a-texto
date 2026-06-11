@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dictado Pro - Voz a Texto</title>
+    <title>Dictado Pro - Versión Avanzada</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,56 +13,67 @@
         <span class="material-icons">dark_mode</span>
     </button>
 
-    <div class="app-card">
-        <header>
-            <h1>Dictado Pro</h1>
-            <p>Convierte tu voz a texto en tiempo real</p>
-        </header>
+    <div class="container-principal">
+        <div class="app-card">
+            <header>
+                <h1>Dictado Pro</h1>
+                <div id="cronometro" class="cronometro oculto">00:00</div>
+            </header>
 
-        <div class="selector-box">
-            <span class="material-icons">language</span>
-            <select id="select-idioma">
-                <option value="es-MX">Español (México)</option>
-                <option value="es-ES">Español (España)</option>
-                <option value="es-US">Español (Estados Unidos)</option>
-                <option value="en-US">English (United States)</option>
-            </select>
-        </div>
-
-        <div class="mic-section">
-            <button id="btn-grabar" class="btn-mic">
-                <span class="material-icons">mic</span>
-            </button>
-            
-            <div id="ondas-voz" class="ondas-contenedor oculto">
-                <div class="onda"></div>
-                <div class="onda"></div>
-                <div class="onda"></div>
-                <div class="onda"></div>
+            <div class="selector-box">
+                <span class="material-icons">language</span>
+                <select id="select-idioma">
+                    <option value="es-MX">Español (México)</option>
+                    <option value="es-ES">Español (España)</option>
+                    <option value="en-US">English (United States)</option>
+                </select>
             </div>
-            <p id="estado-texto">Toca el micrófono para empezar</p>
-        </div>
 
-        <div class="textarea-container">
-            <textarea id="texto-resultado" placeholder="Tu dictado aparecerá aquí..." readonly></textarea>
-            <div class="contador">
-                <span id="count-palabras">0 palabras</span> | <span id="count-letras">0 caracteres</span>
+            <div class="mic-section">
+                <button id="btn-grabar" class="btn-mic">
+                    <span class="material-icons">mic</span>
+                </button>
+                <div id="ondas-voz" class="ondas-contenedor oculto">
+                    <div class="onda"></div>
+                    <div class="onda"></div>
+                    <div class="onda"></div>
+                    <div class="onda"></div>
+                </div>
+                <p id="estado-texto">Toca el micrófono para empezar</p>
+            </div>
+
+            <div class="textarea-container">
+                <textarea id="texto-resultado" placeholder="Tu dictado aparecerá aquí..." readonly></textarea>
+                <div class="contador">
+                    <span id="count-palabras">0 palabras</span> | <span id="count-letras">0 caracteres</span>
+                </div>
+            </div>
+
+            <div class="acciones-barra">
+                <button id="btn-copiar" class="btn-accion" title="Copiar texto">
+                    <span class="material-icons">content_copy</span>
+                </button>
+                <button id="btn-guardar" class="btn-accion btn-exito" title="Guardar en Historial">
+                    <span class="material-icons">save</span>
+                </button>
+                <button id="btn-word" class="btn-accion btn-word" title="Exportar a Word">
+                    <span class="material-icons">description</span>
+                </button>
+                <button id="btn-borrar" class="btn-accion btn-peligro" title="Borrar todo">
+                    <span class="material-icons">delete_sweep</span>
+                </button>
             </div>
         </div>
 
-        <div class="acciones-barra">
-            <button id="btn-copiar" class="btn-accion" title="Copiar texto">
-                <span class="material-icons">content_copy</span>
-                <span>Copiar</span>
-            </button>
-            <button id="btn-borrar" class="btn-accion btn-peligro" title="Borrar todo">
-                <span class="material-icons">delete_sweep</span>
-                <span>Limpiar</span>
-            </button>
+        <div class="history-card">
+            <h2><span class="material-icons">history</span> Historial</h2>
+            <div id="lista-historial" class="lista-historial">
+                <p class="text-vacio">No hay notas guardadas localmente.</p>
+            </div>
         </div>
     </div>
 
-    <div id="toast" class="toast-oculto">¡Texto copiado al portapapeles!</div>
+    <div id="toast" class="toast-oculto">¡Acción realizada con éxito!</div>
 
     <script src="app.js"></script>
 </body>
